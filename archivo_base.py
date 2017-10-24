@@ -14,8 +14,8 @@ from datetime import datetime
 
 # Open dataset
 dataset = Dataset('http://apdrc.soest.hawaii.edu:80/dods/public_data/satellite_product/TRMM/TRMM_PR/3B42_daily/v7')
-
-data = dataset.variables['precipitation'][7119,21:37,1130:1147]
+#La latitud empieza en 0, uno menos del de la tabla.
+data = dataset.variables['precipitation'][7119,220:236,720:728]
 
 #6.216667, -75.566667
 m = Basemap(projection='lcc', resolution='h',lat_0=0.1, lon_0=-32,llcrnrlat=5.375,llcrnrlon=282.625,urcrnrlat=9.125,urcrnrlon=286.625, area_thresh=10)
