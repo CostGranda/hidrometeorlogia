@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from openpyxl import load_workbook
 from datetime import timedelta, datetime
 import numpy as np
-from calculos import calcularFecha
+from calculos import calcularFecha 
 
 # Carga libro de excel
 libro = load_workbook('C:\\Users\\larom\\Google Drive\\MAESTRIA RRHH\\HIDROMETEOROLOGIA\\Registros DAPARD\\Ficha de Reporte_Emergencias_2014_Final.xlsx')
@@ -20,9 +20,9 @@ hoja = libro.get_sheet_by_name('coordenadas')
 
 def fechas():
     """
-    Selecciona la hoja de fechas en excel que están en otro formato
+    Selecciona la hoja de fechas en excel que están en otro formato 
     y las transforma a dd/mm/yyyy
-
+    
     """
     hoja = libro.get_sheet_by_name('fechas')
     # Rango de los datos (varia segun el año)
@@ -37,17 +37,14 @@ def fechas():
         mes = misda[i][4:6]
         dia = misda[i][6:]
         misda[i] = '/'.join((dia, mes, anio))
-
+        
     return misda
+    
 
 
-
-def coordMunicipios():
-    """
-    Crea un diccionario con los municipios y coordenadas correspondientas
-    """
+def coordMunicipios():   
     municipios = {}
-    seleccion = hoja['A1:B125']
+    seleccion = hoja['A1:B125']    
     for linea in seleccion:
         (municipio, coordenada) =  linea
         municipios[municipio.value] = coordenada.value.split(', ')
@@ -94,8 +91,8 @@ def precipitacion(municipio='San Pedro De Urabá', fecha='21/5/2014'):
     print(prom)
     fechaIni = datetime.strptime(fecha, '%d/%m/%Y') - timedelta(days=10)
     fecha = datetime.strptime(fecha, '%d/%m/%Y')
-
-    # Crea dos subplots
+    
+    # Crea dos subplots 
     fig, ax1 = plt.subplots(figsize=(8,5))
     ax2 =  ax1.twinx()
     #plt.figure(figsize=(10,5))
@@ -110,10 +107,10 @@ def precipitacion(municipio='San Pedro De Urabá', fecha='21/5/2014'):
     plt.gcf().autofmt_xdate()
     ax1.plot(ejex,prom, 'o-')
     ax2.plot(ejex, acumulado,'--', color='purple')
-    plt.savefig('graficas/{}_{}_{}_{}.png'.format(fecha.date().year,
+    plt.savefig('graficas/{}_{}_{}_{}.png'.format(fecha.date().year, 
                 fecha.date().month, fecha.date().day, municipio))
-
-
+    
+   
 
 misda = fechas()
 co = 0
@@ -143,3 +140,4 @@ for i in range(50,len(misda),2):
 #plt.title('Precipitación')
 ##plt.savefig('C:\\Users\\larom\\Documents\\GitHub\\hidrometeorlogia\\hola.png')
 #plt.show()
+
