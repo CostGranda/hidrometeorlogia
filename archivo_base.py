@@ -18,7 +18,7 @@ hoja = libro.get_sheet_by_name('coordenadas')
 
 def fechas():
     hoja = libro.get_sheet_by_name('fechas')
-    seleccion = hoja['A1:B54']
+    seleccion = hoja['A1:B68']
     misda = []
     for linea in seleccion:
         for columna in linea:
@@ -71,33 +71,40 @@ def precipitacion(municipio='San Pedro De Urabá', fecha='21/5/2014'):
     south = coordenadas[municipio][1]
     east = coordenadas[municipio][2]
     north = coordenadas[municipio][3]
-    print(west,south,east,north)
+    print(west-1,south-1,east+2,north+2)
     final = calcularFecha(fecha)
     inicial = final - 10
-    print(final,inicial)
+    acumulado = []
     for dia in range(inicial, final+1):
-        datos=dataset.variables['hqprecipitation'][dia,south-1:north+1,west-1:east+1]
+        datos=dataset.variables['hqprecipitation'][dia,south-1:north+2,west-1:east+2]
         #datos = matriz[dia,south:north,west:east]
         prom.append(datos.mean())
+        acumulado.append(sum(prom))
     print(prom)
     fechaIni = datetime.strptime(fecha, '%d/%m/%Y') - timedelta(days=10)
     fecha = datetime.strptime(fecha, '%d/%m/%Y')
-    plt.figure(figsize=(10,5))
-    plt.title('Precipitación promedio acumulada en {}\n desde {} hasta {}'.format(
+    fig, ax1 = plt.subplots(figsize=(8,5))
+    ax2 =  ax1.twinx()
+    #plt.figure(figsize=(10,5))
+    ax1.set_title('Precipitación promedio acumulada en {}\n desde {} hasta {}'.format(
             municipio, fechaIni.date(), fecha.date()), tamano)
-    plt.xlabel('Días', tamano)
-    plt.ylabel('mm', tamano)
+    ax1.set_xlabel('Días', tamano)
+    ax1.set_ylabel('mm/día', tamano)
+    ax2.set_ylabel('mm', tamano)
     ejex = list(range(11))
     plt.xlim(0,10)
     plt.xticks(ejex,[(fechaIni + timedelta(days=i)).date() for i in range(0,11)])
     plt.gcf().autofmt_xdate()
-    plt.plot(ejex,prom, 'o-')
+    ax1.plot(ejex,prom, 'o-')
+    ax2.plot(ejex, acumulado,'--', color='purple')
+    plt.savefig('graficas/{}_{}_{}_{}.png'.format(fecha.date().year, 
+                fecha.date().month, fecha.date().day, municipio))
     
    
 
 misda = fechas()
 co = 0
-for i in range(0,5,2):
+for i in range(50,len(misda),2):
     co += 1
     print("VUELTA: {}, MUNICIPIO: {}, FECHA: {}".format(co, misda[i], misda[i+1]))
     precipitacion(misda[i],misda[i+1])
@@ -110,10 +117,10 @@ for i in range(0,5,2):
 #
 #m.drawcoastlines()
 #m.drawstates()
-##m.drawparallels(np.arange(m.latmin, m.latmax, 0.5), labels=[1,0,0,0])
-##m.drawmeridians(np.arange(m.lonmin, m.lonmax, 0.5), labels=[0,0,0,1])
+#m.drawparallels(np.arange(m.latmin, m.latmax, 0.25), labels=[1,0,0,0])
+#m.drawmeridians(np.arange(m.lonmin, m.lonmax, 0.25), labels=[0,0,0,1])
 #
-#ny = data.shape[0]; nx = data.shape[1]
+#ny = dataset.shape[0]; nx = data.shape[1]
 #lons, lats = m.makegrid(nx, ny)
 #x, y = m(lons, lats)
 #
